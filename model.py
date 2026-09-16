@@ -6,10 +6,9 @@ Stage 1 Real-Time Pose Estimation and Machine Learning Classifier
 Classes Detected:
     - Warrior II (Virabhadrasana II)
     - Tree Pose (Vrksasana)
-    - Goddess Pose (Utkata Konasana)
-    - Downward-Facing Dog (Adho Mukha Svanasana)
     - Plank Pose (Phalakasana)
     - Mountain Pose (Tadasana)
+    - Sitting / Resting
 
 Usage:
     # Run live webcam detection:
@@ -77,7 +76,8 @@ def load_pipeline(model_dir="models"):
 
 def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
     """
-    Runs trained ML pipeline on a single frame's landmark coordinates.
+    Runs trained ML pipeline on a single frame's landmark coordinates
+    with biomechanical ground-truth verification for Mountain and Tree poses.
     Returns:
         (predicted_label, confidence, feats_dict)
     """
@@ -93,7 +93,170 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
         proba = model.predict_proba(feature_vector_scaled)[0]
         confidence = float(np.max(proba))
 
+    # Biomechanical Ground-Truth Verification for Mountain & Tree poses
+    if landmarks_xyz is not None and len(landmarks_xyz) >= 33:
+        l_knee = feats_dict.get("left_knee_angle", 180)
+        r_knee = feats_dict.get("right_knee_angle", 180)
+        l_hip = feats_dict.get("left_hip_angle", 180)
+        r_hip = feats_dict.get("right_hip_angle", 180)
+        torso = feats_dict.get("torso_inclination", 0)
+
+        l_ank_y = landmarks_xyz[LM["LEFT_ANKLE"]][1]
+        r_ank_y = landmarks_xyz[LM["RIGHT_ANKLE"]][1]
+        l_foot_y = landmarks_xyz[LM["LEFT_FOOT_INDEX"]][1]
+        r_foot_y = landmarks_xyz[LM["RIGHT_FOOT_INDEX"]][1]
+        mid_hip_y = (landmarks_xyz[LM["LEFT_HIP"]][1] + landmarks_xyz[LM["RIGHT_HIP"]][1]) / 2.0
+
+        min_knee = min(l_knee, r_knee)
+        max_knee = max(l_knee, r_knee)
+        ankle_diff_y = abs(l_ank_y - r_ank_y)
+        foot_diff_y = abs(l_foot_y - r_foot_y)
+
+        # 1. Tree Pose (Vrksasana):
+        # Standing upright (mid_hip_y < 0.78, torso <= 22)
+        # ONE standing leg is straight (max_knee >= 142)
+        # ONE knee is bent (min_knee <= 110)
+        # Foot lifted off floor (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95)
+        is_tree = (
+            mid_hip_y < 0.78
+            and max_knee >= 142
+            and min_knee <= 110
+            and torso <= 22
+            and (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95)
+        )
+
+        # 2. Mountain Pose (Tadasana - Hands Interlocked Overhead & Stretching on Toes):
+        l_shld = feats_dict.get("left_shoulder_angle", 0)
+        r_shld = feats_dict.get("right_shoulder_angle", 0)
+        l_elb = feats_dict.get("left_elbow_angle", 180)
+        r_elb = feats_dict.get("right_elbow_angle", 180)
+        l_ank = feats_dict.get("left_ankle_angle", 90)
+        r_ank = feats_dict.get("right_ankle_angle", 90)
+
+        l_wrist_y = landmarks_xyz[LM["LEFT_WRIST"]][1]
+        r_wrist_y = landmarks_xyz[LM["RIGHT_WRIST"]][1]
+        l_wrist_x = landmarks_xyz[LM["LEFT_WRIST"]][0]
+        r_wrist_x = landmarks_xyz[LM["RIGHT_WRIST"]][0]
+        l_shld_y = landmarks_xyz[LM["LEFT_SHOULDER"]][1]
+        r_shld_y = landmarks_xyz[LM["RIGHT_SHOULDER"]][1]
+        nose_y = landmarks_xyz[LM["NOSE"]][1]
+
+        l_heel_y = landmarks_xyz[LM["LEFT_HEEL"]][1]
+        r_heel_y = landmarks_xyz[LM["RIGHT_HEEL"]][1]
+
+        # Hands interlocked and stretched straight above head:
+        arms_overhead_interlocked = (
+            (l_wrist_y < l_shld_y and r_wrist_y < r_shld_y)
+            and (l_wrist_y < nose_y and r_wrist_y < nose_y)
+            and (l_shld >= 135 and r_shld >= 135)
+            and (l_elb >= 135 and r_elb >= 135)
+            and (abs(l_wrist_x - r_wrist_x) < 0.25)
+        )
+
+        # Stretching on toes:
+        on_toes = (
+            (l_heel_y < l_foot_y - 0.012 or r_heel_y < r_foot_y - 0.012)
+            or (l_ank >= 104 or r_ank >= 104)
+        )
+
+        is_standing_upright = (
+            mid_hip_y < 0.78
+            and l_knee >= 145 and r_knee >= 145
+            and l_hip >= 140 and r_hip >= 140
+            and torso <= 20
+        )
+
+        is_mountain_correct = (
+            is_standing_upright
+            and arms_overhead_interlocked
+            and on_toes
+        )
+
+        if is_tree:
+            label = "Tree"
+            confidence = max(confidence if confidence is not None else 0.92, 0.95)
+        elif is_mountain_correct:
+            label = "Mountain"
+            confidence = max(confidence if confidence is not None else 0.92, 0.98)
+        elif is_standing_upright and label not in ["Warrior II", "Plank"]:
+            label = "Standing"
+            confidence = 0.92
+
     return label, confidence, feats_dict
+
+
+def detect_sitting_or_partial(landmarks_xyz, landmarks_list, feats_dict):
+    """
+    Detects if the user is truly seated or sitting close to the camera (desk sitting)
+    where only the upper body is visible, while ensuring full-body standing poses
+    (like Mountain and Tree) are never falsely blocked.
+    Returns:
+        (is_detected, label, feedback, confidence)
+    """
+    if landmarks_xyz is None or len(landmarks_xyz) < 33:
+        return False, None, None, None
+
+    l_hip_idx = LM["LEFT_HIP"]
+    r_hip_idx = LM["RIGHT_HIP"]
+    l_knee_idx = LM["LEFT_KNEE"]
+    r_knee_idx = LM["RIGHT_KNEE"]
+
+    mid_hip_y = (landmarks_xyz[l_hip_idx][1] + landmarks_xyz[r_hip_idx][1]) / 2.0
+    l_knee_y = landmarks_xyz[l_knee_idx][1]
+    r_knee_y = landmarks_xyz[r_knee_idx][1]
+
+    l_knee = feats_dict.get("left_knee_angle", 180)
+    r_knee = feats_dict.get("right_knee_angle", 180)
+    l_hip = feats_dict.get("left_hip_angle", 180)
+    r_hip = feats_dict.get("right_hip_angle", 180)
+    torso = feats_dict.get("torso_inclination", 0)
+
+    # 1. True Desk Sitting / Upper-Body Only Check:
+    # A user is ONLY sitting at a desk if their hips are in the lower portion of the frame
+    # (mid_hip_y > 0.75) AND knees are cut off below the screen (both > 0.95 or invisible).
+    # When a user is standing, mid_hip_y is <= 0.75, so desk sitting will NEVER trigger!
+    knees_below_frame = (l_knee_y > 0.96 and r_knee_y > 0.96)
+    low_knee_vis = False
+    if landmarks_list is not None and len(landmarks_list) > 28:
+        l_knee_v = getattr(landmarks_list[l_knee_idx], "visibility", 1.0)
+        r_knee_v = getattr(landmarks_list[r_knee_idx], "visibility", 1.0)
+        if l_knee_v < 0.35 and r_knee_v < 0.35:
+            low_knee_vis = True
+
+    if mid_hip_y > 0.75 and (knees_below_frame or low_knee_vis):
+        return (
+            True,
+            "Sitting / Step Back",
+            "Lower body not in frame. Step back so full body is visible.",
+            0.95,
+        )
+
+    # 2. Chair or Floor Sitting Check:
+    # Full body is visible, but user is seated:
+    # Both hips bent (~90°), both knees bent (~90°), torso upright.
+    # If either knee is straight (>= 142°), the user is standing, NOT sitting!
+    is_chair_sitting = (
+        (mid_hip_y > 0.50)
+        and (65 <= l_hip <= 130 and 65 <= r_hip <= 130)
+        and (55 <= l_knee <= 130 and 55 <= r_knee <= 130)
+        and torso < 35
+    )
+
+    is_floor_sitting = (
+        (45 <= l_hip <= 85 and 45 <= r_hip <= 85)
+        and (30 <= l_knee <= 70 and 30 <= r_knee <= 70)
+        and torso < 25
+    )
+
+    if is_chair_sitting or is_floor_sitting:
+        return (
+            True,
+            "Sitting",
+            "Currently sitting. Stand up and step back to perform yoga asanas.",
+            0.95,
+        )
+
+    return False, None, None, None
 
 
 def generate_pose_feedback(label, feats_dict):
@@ -122,26 +285,40 @@ def generate_pose_feedback(label, feats_dict):
         if torso > 15:
             feedback.append("Lengthen spine straight upwards")
 
-    elif label == "Goddess":
-        l_knee = feats_dict.get("left_knee_angle", 180)
-        r_knee = feats_dict.get("right_knee_angle", 180)
-        if l_knee > 120 or r_knee > 120:
-            feedback.append("Sink deeper into squat")
-        l_elb = feats_dict.get("left_elbow_angle", 180)
-        r_elb = feats_dict.get("right_elbow_angle", 180)
-        if abs(l_elb - 90) > 25 or abs(r_elb - 90) > 25:
-            feedback.append("Bend elbows at 90-degree cactus arms")
-
     elif label == "Plank":
         torso = feats_dict.get("torso_inclination", 0)
         l_hip = feats_dict.get("left_hip_angle", 180)
         if l_hip < 155:
             feedback.append("Avoid sagging or lifting hips too high")
 
-    elif label == "Downward Dog":
-        l_hip = feats_dict.get("left_hip_angle", 180)
-        if l_hip > 90:
-            feedback.append("Push hips up and back into inverted V")
+    elif label == "Sitting":
+        feedback.append("Currently sitting. Stand up and step back to perform yoga asanas")
+
+    elif label == "Sitting / Step Back":
+        feedback.append("Lower body not in frame. Step back so full body is visible")
+
+    elif label == "Standing":
+        l_shld = feats_dict.get("left_shoulder_angle", 0)
+        r_shld = feats_dict.get("right_shoulder_angle", 0)
+        l_elb = feats_dict.get("left_elbow_angle", 180)
+        r_elb = feats_dict.get("right_elbow_angle", 180)
+        l_ank = feats_dict.get("left_ankle_angle", 90)
+        r_ank = feats_dict.get("right_ankle_angle", 90)
+
+        arms_up = (l_shld >= 135 and r_shld >= 135 and l_elb >= 135 and r_elb >= 135)
+        on_toes = (l_ank >= 104 or r_ank >= 104)
+
+        if not arms_up and not on_toes:
+            feedback.append("Interlock fingers, stretch arms straight above head & lift heels on toes for Mountain Pose")
+        elif not arms_up:
+            feedback.append("Interlock fingers and stretch arms straight above head")
+        elif not on_toes:
+            feedback.append("Lift heels and stretch upward on your toes!")
+        else:
+            feedback.append("Great posture alignment! Full upward stretch on toes")
+
+    elif label == "Mountain":
+        feedback.append("Great posture alignment! Full upward stretch on toes")
 
     if not feedback:
         feedback.append("Great posture alignment!")
@@ -193,6 +370,10 @@ def draw_hud(frame, label, confidence, feedback, fps, confidence_threshold=0.6):
     status_color = (0, 220, 100) if (confidence and confidence >= confidence_threshold) else (0, 165, 255)
     if label == "No person detected":
         status_color = (80, 80, 220)
+    elif "Sitting" in label or "Step Back" in label:
+        status_color = (255, 180, 40)
+    elif "Standing" in label:
+        status_color = (240, 200, 50)
     cv2.line(frame, (0, 85), (w, 85), status_color, 2)
 
     # Title
@@ -301,7 +482,7 @@ def process_source(source, model, scaler, label_encoder, feature_cols,
         prev_time = curr_time
 
         # Pose Detection
-        landmarks_xyz, _ = detector.detect(frame)
+        landmarks_xyz, landmarks_list = detector.detect(frame)
 
         label = "No person detected"
         confidence = None
@@ -311,11 +492,24 @@ def process_source(source, model, scaler, label_encoder, feature_cols,
             # Draw skeleton
             draw_skeleton(frame, landmarks_xyz)
 
-            # ML Classification
-            label, confidence, feats_dict = predict_pose(
-                landmarks_xyz, model, scaler, label_encoder, feature_cols
+            # Feature Extraction
+            feats_dict = extract_features(landmarks_xyz)
+
+            # Check if user is sitting (chair/floor) or lower body is cut off
+            is_sitting, sit_label, sit_feedback, sit_conf = detect_sitting_or_partial(
+                landmarks_xyz, landmarks_list, feats_dict
             )
-            feedback = generate_pose_feedback(label, feats_dict)
+
+            if is_sitting:
+                label = sit_label
+                confidence = sit_conf
+                feedback = sit_feedback
+            else:
+                # ML Classification
+                label, confidence, _ = predict_pose(
+                    landmarks_xyz, model, scaler, label_encoder, feature_cols
+                )
+                feedback = generate_pose_feedback(label, feats_dict)
 
         # Draw UI
         draw_hud(frame, label, confidence, feedback, fps, confidence_threshold)

@@ -312,7 +312,7 @@ def extract_features(landmarks_xyz):
 def generate_synthetic_pose_dataset(samples_per_class=350, random_seed=42):
     """
     Generates a realistic, biomechanically grounded synthetic training dataset
-    for yoga poses including Warrior II, Tree, Goddess, Downward Dog, Plank, and Mountain.
+    for yoga poses including Warrior II, Tree, Plank, Mountain, and Sitting.
     """
     np.random.seed(random_seed)
 
@@ -322,24 +322,49 @@ def generate_synthetic_pose_dataset(samples_per_class=350, random_seed=42):
             {"means": [172, 172, 92, 92, 168, 115, 175, 95, 105, 88, 5], "std": 6},
         ],
         "Tree": [
-            {"means": [155, 155, 150, 150, 172, 120, 176, 45, 105, 75, 4], "std": 7},
-            {"means": [155, 155, 150, 150, 120, 172, 45, 176, 75, 105, 4], "std": 7},
-            {"means": [60, 60, 45, 45, 172, 120, 176, 45, 105, 75, 4], "std": 6},
-            {"means": [60, 60, 45, 45, 120, 172, 45, 176, 75, 105, 4], "std": 6},
-        ],
-        "Goddess": [
-            {"means": [90, 90, 92, 92, 110, 110, 100, 100, 90, 90, 6], "std": 7},
-            {"means": [95, 95, 88, 88, 118, 118, 90, 90, 88, 88, 5], "std": 6},
-            {"means": [85, 85, 95, 95, 102, 102, 110, 110, 92, 92, 6], "std": 7},
-        ],
-        "Downward Dog": [
-            {"means": [175, 175, 162, 162, 68, 68, 174, 174, 85, 85, 48], "std": 6},
+            # Raised arms overhead, left leg standing, right leg bent (knee ~55)
+            {"means": [155, 155, 150, 150, 172, 120, 174, 55, 105, 75, 4], "std": 7},
+            # Raised arms overhead, right leg standing, left leg bent (knee ~55)
+            {"means": [155, 155, 150, 150, 120, 172, 55, 174, 75, 105, 4], "std": 7},
+            # Prayer hands at chest, left leg standing, right leg bent (knee ~75)
+            {"means": [60, 60, 45, 45, 172, 125, 174, 75, 105, 75, 4], "std": 7},
+            # Prayer hands at chest, right leg standing, left leg bent (knee ~75)
+            {"means": [60, 60, 45, 45, 125, 172, 75, 174, 75, 105, 4], "std": 7},
+            # Hands at hips/sides, beginner tree (foot at calf, knee ~90)
+            {"means": [150, 150, 30, 30, 170, 130, 172, 90, 100, 75, 5], "std": 7},
+            {"means": [150, 150, 30, 30, 130, 170, 90, 172, 75, 100, 5], "std": 7},
+            # Arms extended sideways for balance, knee ~70
+            {"means": [168, 168, 90, 90, 172, 125, 174, 70, 105, 75, 4], "std": 7},
+            {"means": [168, 168, 90, 90, 125, 172, 70, 174, 75, 105, 4], "std": 7},
         ],
         "Plank": [
             {"means": [175, 175, 88, 88, 172, 172, 175, 175, 88, 88, 82], "std": 5},
         ],
         "Mountain": [
-            {"means": [174, 174, 20, 20, 175, 175, 176, 176, 92, 92, 3], "std": 4},
+            # Hands interlocked and stretched straight above head on toes (Tadasana):
+            # Left & Right Elbows: ~170 (straight arms)
+            # Left & Right Shoulders: ~165 (overhead stretch)
+            # Left & Right Hips: ~172 (straight spine)
+            # Left & Right Knees: ~175 (straight legs)
+            # Left & Right Ankles: ~118 (plantar flexion / on toes)
+            # Torso Inclination: ~3 (vertical)
+            {"means": [170, 170, 165, 165, 172, 172, 175, 175, 118, 118, 3], "std": 6},
+            {"means": [165, 165, 170, 170, 172, 172, 174, 174, 115, 115, 3], "std": 6},
+            {"means": [160, 160, 160, 160, 170, 170, 174, 174, 120, 120, 4], "std": 6},
+        ],
+        "Standing": [
+            # Normal casual standing with arms at sides or relaxed (NOT Mountain pose)
+            {"means": [168, 168, 22, 22, 172, 172, 172, 172, 92, 92, 4], "std": 6},
+            {"means": [162, 162, 35, 35, 170, 170, 170, 170, 92, 92, 5], "std": 6},
+            {"means": [140, 140, 30, 30, 170, 170, 170, 170, 92, 92, 5], "std": 6},
+        ],
+        "Sitting": [
+            # Chair sitting with hands on lap / desk
+            {"means": [105, 105, 25, 25, 95, 95, 90, 90, 90, 90, 6], "std": 6},
+            # Desk sitting with arms forward / typing
+            {"means": [85, 85, 35, 35, 100, 100, 92, 92, 90, 90, 10], "std": 6},
+            # Cross-legged floor sitting (Sukhasana)
+            {"means": [135, 135, 25, 25, 65, 65, 45, 45, 80, 80, 4], "std": 5},
         ],
     }
 
