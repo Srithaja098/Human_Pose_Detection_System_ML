@@ -61,14 +61,6 @@ def run_tests():
             "left_ankle_angle": 90.0, "right_ankle_angle": 105.0,
             "torso_inclination": 5.0,
         },
-        "Goddess": {
-            "left_elbow_angle": 90.0, "right_elbow_angle": 90.0,
-            "left_shoulder_angle": 92.0, "right_shoulder_angle": 92.0,
-            "left_hip_angle": 110.0, "right_hip_angle": 110.0,
-            "left_knee_angle": 98.0, "right_knee_angle": 98.0,
-            "left_ankle_angle": 90.0, "right_ankle_angle": 90.0,
-            "torso_inclination": 5.0,
-        },
         "Plank": {
             "left_elbow_angle": 175.0, "right_elbow_angle": 175.0,
             "left_shoulder_angle": 88.0, "right_shoulder_angle": 88.0,
@@ -77,13 +69,37 @@ def run_tests():
             "left_ankle_angle": 88.0, "right_ankle_angle": 88.0,
             "torso_inclination": 85.0,
         },
-        "Downward Dog": {
-            "left_elbow_angle": 175.0, "right_elbow_angle": 175.0,
+        "Mountain": {
+            "left_elbow_angle": 170.0, "right_elbow_angle": 170.0,
             "left_shoulder_angle": 165.0, "right_shoulder_angle": 165.0,
-            "left_hip_angle": 68.0, "right_hip_angle": 68.0,
+            "left_hip_angle": 172.0, "right_hip_angle": 172.0,
             "left_knee_angle": 175.0, "right_knee_angle": 175.0,
-            "left_ankle_angle": 85.0, "right_ankle_angle": 85.0,
-            "torso_inclination": 48.0,
+            "left_ankle_angle": 118.0, "right_ankle_angle": 118.0,
+            "torso_inclination": 3.0,
+        },
+        "Standing": {
+            "left_elbow_angle": 168.0, "right_elbow_angle": 168.0,
+            "left_shoulder_angle": 22.0, "right_shoulder_angle": 22.0,
+            "left_hip_angle": 172.0, "right_hip_angle": 172.0,
+            "left_knee_angle": 172.0, "right_knee_angle": 172.0,
+            "left_ankle_angle": 92.0, "right_ankle_angle": 92.0,
+            "torso_inclination": 3.0,
+        },
+        "Tree": {
+            "left_elbow_angle": 60.0, "right_elbow_angle": 60.0,
+            "left_shoulder_angle": 45.0, "right_shoulder_angle": 45.0,
+            "left_hip_angle": 172.0, "right_hip_angle": 125.0,
+            "left_knee_angle": 174.0, "right_knee_angle": 75.0,
+            "left_ankle_angle": 105.0, "right_ankle_angle": 75.0,
+            "torso_inclination": 4.0,
+        },
+        "Sitting": {
+            "left_elbow_angle": 105.0, "right_elbow_angle": 105.0,
+            "left_shoulder_angle": 25.0, "right_shoulder_angle": 25.0,
+            "left_hip_angle": 95.0, "right_hip_angle": 95.0,
+            "left_knee_angle": 90.0, "right_knee_angle": 90.0,
+            "left_ankle_angle": 90.0, "right_ankle_angle": 90.0,
+            "torso_inclination": 6.0,
         },
     }
 
@@ -98,6 +114,17 @@ def run_tests():
         status = "PASSED" if predicted_label == expected_pose else "MISMATCH"
         print(f"  [+] Expected: '{expected_pose}' -> Predicted: '{predicted_label}' ({conf*100:.1f}%) | Tip: '{feedback}' [{status}]")
         assert predicted_label == expected_pose, f"Failed prediction for {expected_pose}"
+
+    # Sitting / Desk partial-view heuristic test
+    from model import detect_sitting_or_partial
+    dummy_xyz = np.zeros((33, 3), dtype=np.float32)
+    dummy_xyz[23] = [0.5, 0.82, 0.0]  # hips pushed down near bottom (desk sitting)
+    dummy_xyz[24] = [0.5, 0.82, 0.0]
+    dummy_xyz[25] = [0.5, 0.99, 0.0]  # knees cut off below frame
+    dummy_xyz[26] = [0.5, 0.99, 0.0]
+    is_sit, s_label, s_tip, _ = detect_sitting_or_partial(dummy_xyz, None, {})
+    assert is_sit and "Sitting" in s_label, "Failed sitting/partial view check"
+    print(f"  [+] Desk Sitting / Partial View Check: '{s_label}' -> '{s_tip}' [PASSED]")
 
     # 5. Test PoseDetector on Synthetic Frame
     print("\n[Step 5/5] Testing PoseDetector on Synthetic Frame...")

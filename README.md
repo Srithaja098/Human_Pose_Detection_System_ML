@@ -1,10 +1,10 @@
-# AI Human Pose Detection & Yoga Asana Classification System 🧘‍♂️⚡
+# AI Human Pose Detection & Yoga Asana Classification System 
 
 An end-to-end Machine Learning and Computer Vision system for real-time human pose estimation, 3D biomechanical joint angle feature extraction, and Yoga Asana classification with live posture alignment feedback.
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
 - **Real-Time 33-Landmark Pose Estimation**: Powered by Google MediaPipe Pose Tasks API for robust joint coordinate tracking.
 - **Biomechanical Angle Calculations**: Derives 11 physiological joint angles in degrees:
@@ -27,10 +27,10 @@ An end-to-end Machine Learning and Computer Vision system for real-time human po
 | :--- | :--- | :--- |
 | **Warrior II** | *Virabhadrasana II* | Arms parallel to ground, front knee at 90°, back leg straight, vertical spine |
 | **Tree Pose** | *Vrksasana* | Single-leg balance with foot on inner thigh, upright spine, prayer/raised arms |
-| **Goddess Pose** | *Utkata Konasana* | Deep wide-stance squat with 90° knee flexion and cactus arms |
-| **Downward Dog** | *Adho Mukha Svanasana* | Inverted V-shape with straight arms, elevated hips, and elongated spine |
 | **Plank Pose** | *Phalakasana* | Straight alignment from head to heels, active core, arms perpendicular |
-| **Mountain Pose** | *Tadasana* | Grounded standing posture with neutral spine and straight limbs |
+| **Mountain Pose** | *Tadasana* | Fingers interlocked and stretched straight above head while balancing upward on toes |
+| **Standing / Neutral** | *Samasthiti* | Natural upright standing; prompts to interlock hands overhead on toes for Mountain Pose |
+| **Sitting / Resting** | *Sukhasana / Chair* | Neutral seated posture; prompts to stand up and step back for yoga |
 
 ---
 
