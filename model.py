@@ -6,7 +6,6 @@ Stage 1 Real-Time Pose Estimation and Machine Learning Classifier
 Classes Detected:
     - Warrior II (Virabhadrasana II)
     - Tree Pose (Vrksasana)
-    - Plank Pose (Phalakasana)
     - Mountain Pose (Tadasana)
     - Sitting / Resting
 
@@ -93,45 +92,29 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
         proba = model.predict_proba(feature_vector_scaled)[0]
         confidence = float(np.max(proba))
 
-    # Biomechanical Ground-Truth Verification for Mountain & Tree poses
+    # Biomechanical Ground-Truth Verification for Warrior II, Tree, and Mountain
     if landmarks_xyz is not None and len(landmarks_xyz) >= 33:
         l_knee = feats_dict.get("left_knee_angle", 180)
         r_knee = feats_dict.get("right_knee_angle", 180)
         l_hip = feats_dict.get("left_hip_angle", 180)
         r_hip = feats_dict.get("right_hip_angle", 180)
-        torso = feats_dict.get("torso_inclination", 0)
-
-        l_ank_y = landmarks_xyz[LM["LEFT_ANKLE"]][1]
-        r_ank_y = landmarks_xyz[LM["RIGHT_ANKLE"]][1]
-        l_foot_y = landmarks_xyz[LM["LEFT_FOOT_INDEX"]][1]
-        r_foot_y = landmarks_xyz[LM["RIGHT_FOOT_INDEX"]][1]
-        mid_hip_y = (landmarks_xyz[LM["LEFT_HIP"]][1] + landmarks_xyz[LM["RIGHT_HIP"]][1]) / 2.0
-
-        min_knee = min(l_knee, r_knee)
-        max_knee = max(l_knee, r_knee)
-        ankle_diff_y = abs(l_ank_y - r_ank_y)
-        foot_diff_y = abs(l_foot_y - r_foot_y)
-
-        # 1. Tree Pose (Vrksasana):
-        # Standing upright (mid_hip_y < 0.78, torso <= 22)
-        # ONE standing leg is straight (max_knee >= 142)
-        # ONE knee is bent (min_knee <= 110)
-        # Foot lifted off floor (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95)
-        is_tree = (
-            mid_hip_y < 0.78
-            and max_knee >= 142
-            and min_knee <= 110
-            and torso <= 22
-            and (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95)
-        )
-
-        # 2. Mountain Pose (Tadasana - Hands Interlocked Overhead & Stretching on Toes):
         l_shld = feats_dict.get("left_shoulder_angle", 0)
         r_shld = feats_dict.get("right_shoulder_angle", 0)
         l_elb = feats_dict.get("left_elbow_angle", 180)
         r_elb = feats_dict.get("right_elbow_angle", 180)
         l_ank = feats_dict.get("left_ankle_angle", 90)
         r_ank = feats_dict.get("right_ankle_angle", 90)
+        torso = feats_dict.get("torso_inclination", 0)
+
+        l_ank_y = landmarks_xyz[LM["LEFT_ANKLE"]][1]
+        r_ank_y = landmarks_xyz[LM["RIGHT_ANKLE"]][1]
+        l_ank_x = landmarks_xyz[LM["LEFT_ANKLE"]][0]
+        r_ank_x = landmarks_xyz[LM["RIGHT_ANKLE"]][0]
+        l_foot_y = landmarks_xyz[LM["LEFT_FOOT_INDEX"]][1]
+        r_foot_y = landmarks_xyz[LM["RIGHT_FOOT_INDEX"]][1]
+        l_heel_y = landmarks_xyz[LM["LEFT_HEEL"]][1]
+        r_heel_y = landmarks_xyz[LM["RIGHT_HEEL"]][1]
+        mid_hip_y = (landmarks_xyz[LM["LEFT_HIP"]][1] + landmarks_xyz[LM["RIGHT_HIP"]][1]) / 2.0
 
         l_wrist_y = landmarks_xyz[LM["LEFT_WRIST"]][1]
         r_wrist_y = landmarks_xyz[LM["RIGHT_WRIST"]][1]
@@ -141,19 +124,60 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
         r_shld_y = landmarks_xyz[LM["RIGHT_SHOULDER"]][1]
         nose_y = landmarks_xyz[LM["NOSE"]][1]
 
-        l_heel_y = landmarks_xyz[LM["LEFT_HEEL"]][1]
-        r_heel_y = landmarks_xyz[LM["RIGHT_HEEL"]][1]
+        min_knee = min(l_knee, r_knee)
+        max_knee = max(l_knee, r_knee)
+        ankle_diff_y = abs(l_ank_y - r_ank_y)
+        ankle_dist_x = abs(l_ank_x - r_ank_x)
+        foot_diff_y = abs(l_foot_y - r_foot_y)
+        wrist_dist_x = abs(l_wrist_x - r_wrist_x)
+        wrist_dist_y = abs(l_wrist_y - r_wrist_y)
 
-        # Hands interlocked and stretched straight above head:
+        # 1. Warrior II (Virabhadrasana II):
+        # Legs: Wide stance (ankle_dist_x >= 0.20), both feet near floor (ankle_diff_y < 0.16)
+        # One front knee bent (min_knee <= 138), one back leg straight (max_knee >= 146)
+        # Arms: Extended horizontally (60 <= l_shld <= 120 and 60 <= r_shld <= 120)
+        # Torso upright (torso <= 25)
+        is_warrior2 = (
+            ankle_dist_x >= 0.20
+            and ankle_diff_y < 0.16
+            and min_knee <= 138
+            and max_knee >= 146
+            and torso <= 25
+            and (60 <= l_shld <= 120 and 60 <= r_shld <= 120)
+        )
+
+        # 2. Tree Pose (Vrksasana):
+        # Leg: Standing on one straight leg (max_knee >= 142), other knee bent (min_knee <= 112),
+        # foot lifted off floor (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95),
+        # torso upright (torso <= 25).
+        # Hands: Palms touching each other and stretched above head
+        is_tree_leg = (
+            mid_hip_y < 0.78
+            and torso <= 25
+            and max_knee >= 142
+            and min_knee <= 112
+            and (ankle_diff_y >= 0.035 or foot_diff_y >= 0.035 or min_knee <= 95)
+        )
+
+        palms_touching_overhead = (
+            (l_wrist_y < l_shld_y and r_wrist_y < r_shld_y)
+            and (l_wrist_y < nose_y and r_wrist_y < nose_y)
+            and (l_shld >= 125 and r_shld >= 125)
+            and (l_elb >= 125 and r_elb >= 125)
+            and (wrist_dist_x < 0.18 and wrist_dist_y < 0.12)
+        )
+
+        is_tree_complete = (is_tree_leg and palms_touching_overhead)
+
+        # 3. Mountain Pose (Tadasana - Hands Interlocked Overhead & Stretching on Toes):
         arms_overhead_interlocked = (
             (l_wrist_y < l_shld_y and r_wrist_y < r_shld_y)
             and (l_wrist_y < nose_y and r_wrist_y < nose_y)
             and (l_shld >= 135 and r_shld >= 135)
             and (l_elb >= 135 and r_elb >= 135)
-            and (abs(l_wrist_x - r_wrist_x) < 0.25)
+            and (wrist_dist_x < 0.25)
         )
 
-        # Stretching on toes:
         on_toes = (
             (l_heel_y < l_foot_y - 0.012 or r_heel_y < r_foot_y - 0.012)
             or (l_ank >= 104 or r_ank >= 104)
@@ -172,13 +196,19 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
             and on_toes
         )
 
-        if is_tree:
+        if is_warrior2:
+            label = "Warrior II"
+            confidence = max(confidence if confidence is not None else 0.92, 0.98)
+        elif is_tree_complete:
             label = "Tree"
-            confidence = max(confidence if confidence is not None else 0.92, 0.95)
+            confidence = max(confidence if confidence is not None else 0.92, 0.98)
+        elif is_tree_leg:
+            label = "Tree"
+            confidence = 0.88
         elif is_mountain_correct:
             label = "Mountain"
             confidence = max(confidence if confidence is not None else 0.92, 0.98)
-        elif is_standing_upright and label not in ["Warrior II", "Plank"]:
+        elif is_standing_upright and label not in ["Warrior II"]:
             label = "Standing"
             confidence = 0.92
 
@@ -268,28 +298,31 @@ def generate_pose_feedback(label, feats_dict):
         l_knee = feats_dict.get("left_knee_angle", 180)
         r_knee = feats_dict.get("right_knee_angle", 180)
         min_knee = min(l_knee, r_knee)
-        if min_knee > 120:
-            feedback.append("Bend front knee closer to 90 degrees")
+        if min_knee > 125:
+            feedback.append("Bend front knee deeper closer to 90 degrees")
         l_shld = feats_dict.get("left_shoulder_angle", 0)
         r_shld = feats_dict.get("right_shoulder_angle", 0)
-        if abs(l_shld - 90) > 20 or abs(r_shld - 90) > 20:
+        if abs(l_shld - 90) > 22 or abs(r_shld - 90) > 22:
             feedback.append("Keep arms parallel to ground")
 
     elif label == "Tree":
+        l_shld = feats_dict.get("left_shoulder_angle", 0)
+        r_shld = feats_dict.get("right_shoulder_angle", 0)
+        l_elb = feats_dict.get("left_elbow_angle", 180)
+        r_elb = feats_dict.get("right_elbow_angle", 180)
         l_knee = feats_dict.get("left_knee_angle", 180)
         r_knee = feats_dict.get("right_knee_angle", 180)
         bent_knee = min(l_knee, r_knee)
-        if bent_knee > 85:
-            feedback.append("Place foot firmly on inner thigh/calf")
         torso = feats_dict.get("torso_inclination", 0)
-        if torso > 15:
-            feedback.append("Lengthen spine straight upwards")
 
-    elif label == "Plank":
-        torso = feats_dict.get("torso_inclination", 0)
-        l_hip = feats_dict.get("left_hip_angle", 180)
-        if l_hip < 155:
-            feedback.append("Avoid sagging or lifting hips too high")
+        if l_shld < 125 or r_shld < 125 or l_elb < 125 or r_elb < 125:
+            feedback.append("Join palms together and stretch arms straight above head")
+        elif bent_knee > 95:
+            feedback.append("Place foot firmly on inner thigh/calf")
+        elif torso > 15:
+            feedback.append("Lengthen spine straight upwards")
+        else:
+            feedback.append("Great posture alignment! Palms joined overhead")
 
     elif label == "Sitting":
         feedback.append("Currently sitting. Stand up and step back to perform yoga asanas")

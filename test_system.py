@@ -61,14 +61,6 @@ def run_tests():
             "left_ankle_angle": 90.0, "right_ankle_angle": 105.0,
             "torso_inclination": 5.0,
         },
-        "Plank": {
-            "left_elbow_angle": 175.0, "right_elbow_angle": 175.0,
-            "left_shoulder_angle": 88.0, "right_shoulder_angle": 88.0,
-            "left_hip_angle": 172.0, "right_hip_angle": 172.0,
-            "left_knee_angle": 175.0, "right_knee_angle": 175.0,
-            "left_ankle_angle": 88.0, "right_ankle_angle": 88.0,
-            "torso_inclination": 85.0,
-        },
         "Mountain": {
             "left_elbow_angle": 170.0, "right_elbow_angle": 170.0,
             "left_shoulder_angle": 165.0, "right_shoulder_angle": 165.0,
@@ -86,11 +78,11 @@ def run_tests():
             "torso_inclination": 3.0,
         },
         "Tree": {
-            "left_elbow_angle": 60.0, "right_elbow_angle": 60.0,
-            "left_shoulder_angle": 45.0, "right_shoulder_angle": 45.0,
+            "left_elbow_angle": 170.0, "right_elbow_angle": 170.0,
+            "left_shoulder_angle": 165.0, "right_shoulder_angle": 165.0,
             "left_hip_angle": 172.0, "right_hip_angle": 125.0,
             "left_knee_angle": 174.0, "right_knee_angle": 75.0,
-            "left_ankle_angle": 105.0, "right_ankle_angle": 75.0,
+            "left_ankle_angle": 92.0, "right_ankle_angle": 105.0,
             "torso_inclination": 4.0,
         },
         "Sitting": {

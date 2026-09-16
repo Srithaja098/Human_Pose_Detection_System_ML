@@ -312,33 +312,30 @@ def extract_features(landmarks_xyz):
 def generate_synthetic_pose_dataset(samples_per_class=350, random_seed=42):
     """
     Generates a realistic, biomechanically grounded synthetic training dataset
-    for yoga poses including Warrior II, Tree, Plank, Mountain, and Sitting.
+    for yoga poses including Warrior II, Tree, Mountain, Standing, and Sitting.
     """
     np.random.seed(random_seed)
 
     pose_specs = {
         "Warrior II": [
-            {"means": [172, 172, 92, 92, 115, 168, 95, 175, 88, 105, 5], "std": 6},
-            {"means": [172, 172, 92, 92, 168, 115, 175, 95, 105, 88, 5], "std": 6},
+            # Left leg bent, right leg straight (knee angles 90-125 deg, arms horizontal)
+            {"means": [172, 172, 90, 90, 110, 168, 92, 174, 88, 105, 4], "std": 6},
+            {"means": [172, 172, 90, 90, 120, 168, 110, 174, 88, 105, 4], "std": 6},
+            {"means": [172, 172, 90, 90, 130, 168, 122, 174, 88, 105, 4], "std": 6},
+            # Right leg bent, left leg straight (knee angles 90-125 deg, arms horizontal)
+            {"means": [172, 172, 90, 90, 168, 110, 174, 92, 105, 88, 4], "std": 6},
+            {"means": [172, 172, 90, 90, 168, 120, 174, 110, 105, 88, 4], "std": 6},
+            {"means": [172, 172, 90, 90, 168, 130, 174, 122, 105, 88, 4], "std": 6},
         ],
         "Tree": [
-            # Raised arms overhead, left leg standing, right leg bent (knee ~55)
-            {"means": [155, 155, 150, 150, 172, 120, 174, 55, 105, 75, 4], "std": 7},
-            # Raised arms overhead, right leg standing, left leg bent (knee ~55)
-            {"means": [155, 155, 150, 150, 120, 172, 55, 174, 75, 105, 4], "std": 7},
-            # Prayer hands at chest, left leg standing, right leg bent (knee ~75)
-            {"means": [60, 60, 45, 45, 172, 125, 174, 75, 105, 75, 4], "std": 7},
-            # Prayer hands at chest, right leg standing, left leg bent (knee ~75)
-            {"means": [60, 60, 45, 45, 125, 172, 75, 174, 75, 105, 4], "std": 7},
-            # Hands at hips/sides, beginner tree (foot at calf, knee ~90)
-            {"means": [150, 150, 30, 30, 170, 130, 172, 90, 100, 75, 5], "std": 7},
-            {"means": [150, 150, 30, 30, 130, 170, 90, 172, 75, 100, 5], "std": 7},
-            # Arms extended sideways for balance, knee ~70
-            {"means": [168, 168, 90, 90, 172, 125, 174, 70, 105, 75, 4], "std": 7},
-            {"means": [168, 168, 90, 90, 125, 172, 70, 174, 75, 105, 4], "std": 7},
-        ],
-        "Plank": [
-            {"means": [175, 175, 88, 88, 172, 172, 175, 175, 88, 88, 82], "std": 5},
+            # Palms touching each other and stretched above head, standing on left leg
+            {"means": [170, 170, 165, 165, 172, 120, 174, 55, 105, 75, 3], "std": 6},
+            {"means": [170, 170, 165, 165, 172, 128, 174, 75, 105, 75, 4], "std": 6},
+            {"means": [170, 170, 165, 165, 172, 135, 174, 90, 105, 75, 4], "std": 6},
+            # Palms touching each other and stretched above head, standing on right leg
+            {"means": [170, 170, 165, 165, 120, 172, 55, 174, 75, 105, 3], "std": 6},
+            {"means": [170, 170, 165, 165, 128, 172, 75, 174, 75, 105, 4], "std": 6},
+            {"means": [170, 170, 165, 165, 135, 172, 90, 174, 75, 105, 4], "std": 6},
         ],
         "Mountain": [
             # Hands interlocked and stretched straight above head on toes (Tadasana):

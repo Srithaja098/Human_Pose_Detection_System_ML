@@ -25,9 +25,8 @@ An end-to-end Machine Learning and Computer Vision system for real-time human po
 
 | Asana Name | Sanskrit | Description |
 | :--- | :--- | :--- |
-| **Warrior II** | *Virabhadrasana II* | Arms parallel to ground, front knee at 90°, back leg straight, vertical spine |
-| **Tree Pose** | *Vrksasana* | Single-leg balance with foot on inner thigh, upright spine, prayer/raised arms |
-| **Plank Pose** | *Phalakasana* | Straight alignment from head to heels, active core, arms perpendicular |
+| **Warrior II** | *Virabhadrasana II* | Wide stance with front knee bent (90°-125°), back leg straight, arms parallel to ground |
+| **Tree Pose** | *Vrksasana* | Single-leg balance with foot on inner calf/thigh, palms touching together and stretched above head |
 | **Mountain Pose** | *Tadasana* | Fingers interlocked and stretched straight above head while balancing upward on toes |
 | **Standing / Neutral** | *Samasthiti* | Natural upright standing; prompts to interlock hands overhead on toes for Mountain Pose |
 | **Sitting / Resting** | *Sukhasana / Chair* | Neutral seated posture; prompts to stand up and step back for yoga |
