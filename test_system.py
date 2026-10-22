@@ -7,8 +7,12 @@ and real-time inference components.
 
 import os
 import sys
+import warnings
 import numpy as np
 import cv2
+
+# Suppress sklearn unpickling version warnings
+warnings.filterwarnings("ignore", module="sklearn")
 
 def run_tests():
     print("=" * 60)
@@ -119,7 +123,7 @@ def run_tests():
     print(f"  [+] Desk Sitting / Partial View Check: '{s_label}' -> '{s_tip}' [PASSED]")
 
     # 5. Test PoseDetector on Synthetic Frame
-    print("\n[Step 5/5] Testing PoseDetector on Synthetic Frame...")
+    print("\n[Step 5/6] Testing PoseDetector on Synthetic Frame...")
     detector = PoseDetector(min_detection_confidence=0.5)
     test_frame = np.zeros((480, 640, 3), dtype=np.uint8)
     cv2.putText(test_frame, "Pose Test", (200, 240), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
@@ -127,10 +131,16 @@ def run_tests():
     landmarks_xyz, landmarks_list = detector.detect(test_frame)
     print("  [+] Blank frame detection handled gracefully (no crash, returned None):", landmarks_xyz is None)
 
+    # 6. Test Stage 2 Posture Scoring, Mirroring, Time-to-Correct & Habit Tracking
+    print("\n[Step 6/6] Testing Stage 2 Posture Scoring, Mirroring & Tracking...")
+    from test_tracking import run_tracking_tests
+    run_tracking_tests()
+
     print("\n" + "=" * 60)
-    print(" ALL SYSTEM DIAGNOSTICS & TESTS PASSED WITH 0 ERRORS! ")
+    print(" ALL SYSTEM DIAGNOSTICS & STAGE 2 TESTS PASSED WITH 0 ERRORS! ")
     print("=" * 60)
 
 
 if __name__ == "__main__":
     run_tests()
+

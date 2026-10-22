@@ -1,0 +1,2 @@
+timestamp,date,user_id,asana,success,time_to_correct_s,hold_s,best_score,mean_score,final_score,duration_s,worst_joint,tip,left_elbow_angle_dev,right_elbow_angle_dev,left_shoulder_angle_dev,right_shoulder_angle_dev,left_hip_angle_dev,right_hip_angle_dev,left_knee_angle_dev,right_knee_angle_dev,torso_inclination_dev
+2026-10-22 16:11:18,2026-10-22,YourName,Warrior II,1,25.38,5.01,100.0,88.7,100.0,30.96,left_shoulder_angle,Raise your Left Shoulder higher (about 13 deg more),3.96,4.75,24.13,12.81,24.11,8.82,20.41,12.16,2.67

@@ -27,9 +27,13 @@ import os
 import sys
 import time
 import argparse
+import warnings
 import numpy as np
 import cv2
 import joblib
+
+# Suppress sklearn unpickling version warnings
+warnings.filterwarnings("ignore", module="sklearn")
 
 from train_yoga_pose_classifier import (
     LM,
@@ -41,6 +45,13 @@ from train_yoga_pose_classifier import (
     calculate_angle,
     train_and_save_model,
 )
+from pose_config import (
+    SCORED_ASANAS,
+    UNSCORED_STATES,
+    DEFAULT_MOUNTAIN_DEF,
+    MOUNTAIN_DEFINITIONS,
+)
+from tracking import PoseSessionTracker, draw_stage2_tracking_hud
 
 
 def ensure_models_exist(model_dir):
@@ -73,10 +84,15 @@ def load_pipeline(model_dir="models"):
     return model, scaler, label_encoder, feature_cols
 
 
-def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
+def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols,
+                 no_rules=False, mountain_def="arms_overhead"):
     """
-    Runs trained ML pipeline on a single frame's landmark coordinates
-    with biomechanical ground-truth verification for Mountain and Tree poses.
+    Runs trained ML pipeline on a single frame's landmark coordinates.
+    
+    Parameters:
+        no_rules: If True, returns pure ML classifier prediction without heuristic overrides.
+        mountain_def: "arms_overhead" (variant) or "arms_at_sides" (standard Tadasana).
+        
     Returns:
         (predicted_label, confidence, feats_dict)
     """
@@ -91,6 +107,10 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
     if hasattr(model, "predict_proba"):
         proba = model.predict_proba(feature_vector_scaled)[0]
         confidence = float(np.max(proba))
+
+    # If pure ML classification requested, skip heuristic overrides
+    if no_rules:
+        return label, confidence, feats_dict
 
     # Biomechanical Ground-Truth Verification for Warrior II, Tree, and Mountain
     if landmarks_xyz is not None and len(landmarks_xyz) >= 33:
@@ -169,20 +189,7 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
 
         is_tree_complete = (is_tree_leg and palms_touching_overhead)
 
-        # 3. Mountain Pose (Tadasana - Hands Interlocked Overhead & Stretching on Toes):
-        arms_overhead_interlocked = (
-            (l_wrist_y < l_shld_y and r_wrist_y < r_shld_y)
-            and (l_wrist_y < nose_y and r_wrist_y < nose_y)
-            and (l_shld >= 135 and r_shld >= 135)
-            and (l_elb >= 135 and r_elb >= 135)
-            and (wrist_dist_x < 0.25)
-        )
-
-        on_toes = (
-            (l_heel_y < l_foot_y - 0.012 or r_heel_y < r_foot_y - 0.012)
-            or (l_ank >= 104 or r_ank >= 104)
-        )
-
+        # 3. Mountain Pose (Tadasana):
         is_standing_upright = (
             mid_hip_y < 0.78
             and l_knee >= 145 and r_knee >= 145
@@ -190,11 +197,27 @@ def predict_pose(landmarks_xyz, model, scaler, label_encoder, feature_cols):
             and torso <= 20
         )
 
-        is_mountain_correct = (
-            is_standing_upright
-            and arms_overhead_interlocked
-            and on_toes
-        )
+        if mountain_def == "arms_at_sides":
+            # Traditional Tadasana: Arms straight alongside body
+            arms_at_sides = (
+                l_shld <= 35 and r_shld <= 35
+                and l_elb >= 140 and r_elb >= 140
+            )
+            is_mountain_correct = is_standing_upright and arms_at_sides
+        else:
+            # Overhead stretch variant
+            arms_overhead_interlocked = (
+                (l_wrist_y < l_shld_y and r_wrist_y < r_shld_y)
+                and (l_wrist_y < nose_y and r_wrist_y < nose_y)
+                and (l_shld >= 135 and r_shld >= 135)
+                and (l_elb >= 135 and r_elb >= 135)
+                and (wrist_dist_x < 0.25)
+            )
+            on_toes = (
+                (l_heel_y < l_foot_y - 0.012 or r_heel_y < r_foot_y - 0.012)
+                or (l_ank >= 104 or r_ank >= 104)
+            )
+            is_mountain_correct = is_standing_upright and arms_overhead_interlocked and on_toes
 
         if is_warrior2:
             label = "Warrior II"
@@ -478,12 +501,13 @@ def draw_hud(frame, label, confidence, feedback, fps, confidence_threshold=0.6):
         1,
         cv2.LINE_AA,
     )
-
-
 def process_source(source, model, scaler, label_encoder, feature_cols,
-                   confidence_threshold=0.6, is_image=False, save_output=None):
+                   confidence_threshold=0.6, is_image=False, save_output=None,
+                   track_asana=None, user_id="User1", no_rules=False,
+                   mountain_def="arms_overhead"):
     """
     Main processing loop for camera stream, video file, or static image.
+    Supports Stage 1 ML inference and Stage 2 posture tracking.
     """
     cap = None
     if is_image:
@@ -498,68 +522,92 @@ def process_source(source, model, scaler, label_encoder, feature_cols,
     detector = PoseDetector(min_detection_confidence=0.5)
     prev_time = time.time()
 
-    while True:
-        if is_image:
-            frame = frame_orig.copy()
-        else:
-            ret, frame = cap.read()
-            if not ret:
-                print("[*] End of stream or video playback completed.")
-                break
-            if isinstance(source, int):
-                frame = cv2.flip(frame, 1)
+    # Initialize Stage 2 Session Tracker if requested
+    tracker = None
+    if track_asana is not None:
+        tracker = PoseSessionTracker(target_asana=track_asana, user_id=user_id)
+        print(f"[*] Stage 2 Tracking activated for '{track_asana}' (User: '{user_id}'). Press SPACE to begin countdown.")
 
-        # Calculate FPS
-        curr_time = time.time()
-        fps = 1.0 / (curr_time - prev_time) if (curr_time - prev_time) > 0 else 30.0
-        prev_time = curr_time
-
-        # Pose Detection
-        landmarks_xyz, landmarks_list = detector.detect(frame)
-
-        label = "No person detected"
-        confidence = None
-        feedback = None
-
-        if landmarks_xyz is not None:
-            # Draw skeleton
-            draw_skeleton(frame, landmarks_xyz)
-
-            # Feature Extraction
-            feats_dict = extract_features(landmarks_xyz)
-
-            # Check if user is sitting (chair/floor) or lower body is cut off
-            is_sitting, sit_label, sit_feedback, sit_conf = detect_sitting_or_partial(
-                landmarks_xyz, landmarks_list, feats_dict
-            )
-
-            if is_sitting:
-                label = sit_label
-                confidence = sit_conf
-                feedback = sit_feedback
+    try:
+        while True:
+            if is_image:
+                frame = frame_orig.copy()
             else:
-                # ML Classification
-                label, confidence, _ = predict_pose(
-                    landmarks_xyz, model, scaler, label_encoder, feature_cols
-                )
-                feedback = generate_pose_feedback(label, feats_dict)
+                ret, frame = cap.read()
+                if not ret:
+                    print("[*] End of stream or video playback completed.")
+                    break
+                if isinstance(source, int):
+                    frame = cv2.flip(frame, 1)
 
-        # Draw UI
-        draw_hud(frame, label, confidence, feedback, fps, confidence_threshold)
+            # Calculate FPS
+            curr_time = time.time()
+            fps = 1.0 / (curr_time - prev_time) if (curr_time - prev_time) > 0 else 30.0
+            prev_time = curr_time
 
-        if save_output:
-            cv2.imwrite(save_output, frame)
-            print(f"[+] Result saved to '{save_output}'")
+            # Pose Detection
+            landmarks_xyz, landmarks_list = detector.detect(frame)
 
-        # Display window
-        cv2.imshow("Human Pose Detection & Yoga Asana Recognition", frame)
-        key = cv2.waitKey(1 if not is_image else 0) & 0xFF
-        if key == ord("q") or is_image:
-            break
+            label = "No person detected"
+            confidence = None
+            feedback = None
 
-    if cap:
-        cap.release()
-    cv2.destroyAllWindows()
+            if landmarks_xyz is not None:
+                # Draw skeleton
+                draw_skeleton(frame, landmarks_xyz)
+
+                # Feature Extraction
+                feats_dict = extract_features(landmarks_xyz)
+
+                if tracker is not None:
+                    # Stage 2 Tracking Mode
+                    tracking_metrics = tracker.update(feats_dict, landmarks_list)
+                    draw_stage2_tracking_hud(frame, tracking_metrics, track_asana)
+                else:
+                    # Stage 1 ML Inference Mode
+                    is_sitting, sit_label, sit_feedback, sit_conf = detect_sitting_or_partial(
+                        landmarks_xyz, landmarks_list, feats_dict
+                    )
+
+                    if is_sitting:
+                        label = sit_label
+                        confidence = sit_conf
+                        feedback = sit_feedback
+                    else:
+                        # ML Classification
+                        label, confidence, _ = predict_pose(
+                            landmarks_xyz, model, scaler, label_encoder, feature_cols,
+                            no_rules=no_rules, mountain_def=mountain_def
+                        )
+                        feedback = generate_pose_feedback(label, feats_dict)
+
+                    # Draw UI
+                    draw_hud(frame, label, confidence, feedback, fps, confidence_threshold)
+            else:
+                if tracker is not None:
+                    tracking_metrics = tracker.update(None, None)
+                    draw_stage2_tracking_hud(frame, tracking_metrics, track_asana)
+                else:
+                    draw_hud(frame, label, confidence, feedback, fps, confidence_threshold)
+
+            if save_output:
+                cv2.imwrite(save_output, frame)
+                print(f"[+] Result saved to '{save_output}'")
+
+            # Display window
+            cv2.imshow("Human Pose Detection & Yoga Asana Recognition", frame)
+            key = cv2.waitKey(1 if not is_image else 0) & 0xFF
+            if key == ord("q") or is_image:
+                break
+            elif key == ord(" ") and tracker is not None:
+                tracker.start_countdown()
+
+    except KeyboardInterrupt:
+        print("\n[*] Interrupted by user (Ctrl+C). Quitting...")
+    finally:
+        if cap:
+            cap.release()
+        cv2.destroyAllWindows()
 
 
 def main():
@@ -600,6 +648,31 @@ def main():
         default=0.6,
         help="Minimum confidence threshold before flagging pose as uncertain (default: 0.6)",
     )
+    parser.add_argument(
+        "--track",
+        type=str,
+        default=None,
+        choices=SCORED_ASANAS,
+        help=f"Enable Stage 2 posture tracking mode for a specific asana ({SCORED_ASANAS})",
+    )
+    parser.add_argument(
+        "--user",
+        type=str,
+        default="User1",
+        help="User identifier for session logging (default: 'User1')",
+    )
+    parser.add_argument(
+        "--no_rules",
+        action="store_true",
+        help="Disable heuristic rules to run pure ML classification",
+    )
+    parser.add_argument(
+        "--mountain_def",
+        type=str,
+        default=DEFAULT_MOUNTAIN_DEF,
+        choices=MOUNTAIN_DEFINITIONS,
+        help="Mountain pose definition: 'arms_overhead' (variant) or 'arms_at_sides' (standard)",
+    )
     args = parser.parse_args()
 
     # Load / Auto-train model pipeline
@@ -619,6 +692,10 @@ def main():
             confidence_threshold=args.confidence_threshold,
             is_image=True,
             save_output=args.save_output,
+            track_asana=args.track,
+            user_id=args.user,
+            no_rules=args.no_rules,
+            mountain_def=args.mountain_def,
         )
     elif args.video:
         print(f"[*] Processing video file: {args.video}")
@@ -631,9 +708,15 @@ def main():
             confidence_threshold=args.confidence_threshold,
             is_image=False,
             save_output=args.save_output,
+            track_asana=args.track,
+            user_id=args.user,
+            no_rules=args.no_rules,
+            mountain_def=args.mountain_def,
         )
     else:
         print(f"[*] Starting live webcam feed (Camera Index: {args.camera_index})...")
+        if args.track:
+            print(f"[*] TRACKING MODE: '{args.track}' for User '{args.user}'. Press SPACE to start 5s countdown.")
         print("[*] Press 'q' in the display window to quit.")
         process_source(
             args.camera_index,
@@ -644,6 +727,10 @@ def main():
             confidence_threshold=args.confidence_threshold,
             is_image=False,
             save_output=args.save_output,
+            track_asana=args.track,
+            user_id=args.user,
+            no_rules=args.no_rules,
+            mountain_def=args.mountain_def,
         )
 
 
