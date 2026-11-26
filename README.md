@@ -280,3 +280,65 @@ Human_Pose_Detection_System_ML/
 │   └── feature_columns.joblib
 └── README.md                       # Thesis documentation & usage guide
 ```
+
+---
+
+## 7. Deviation Analysis
+
+The Deviation Analysis module quantifies how posture errors of increasing severity affect joint deviations, posture scores, classifier predictions, and feedback tips across the **4 active classes** in scope:
+
+- **Active Asanas (mistake-deviation analysis):** `Warrior II`, `Tree`, `Mountain`
+- **Active Non-Pose State (robustness testing):** `Sitting`
+
+> **Important Note on Reference Data:** Reference profiles represent ground-truth poses performed by the **project members** (called **reference data**), not certified external yoga instructors. Until live member recordings are captured in `expert_data/`, the pipeline falls back to `synthetic_placeholder` means from `generate_synthetic_pose_dataset()` and prominently labels the source in all outputs.
+
+### 7.1 Recording Reference Data (`record_reference.py`)
+Record reference videos and per-frame 11 biomechanical angles into `expert_data/<pose>/` and `expert_data/expert_angles.csv`:
+
+```bash
+# Record 10 seconds of Warrior II from webcam
+python record_reference.py --pose "Warrior II" --person_name Alice --duration 10 --camera_index 0
+
+# Or process an existing video file
+python record_reference.py --pose "Sitting" --person_name Bob --source path/to/video.mp4
+```
+
+Setup tips: place the camera at hip height, 2-3 m away, plain background, full body in frame; face the camera for Mountain, Warrior II, and Tree; record both left and right sides for Warrior II and Tree; record both chair and floor cross-legged sitting for Sitting.
+
+### 7.2 Building Reference Profiles (`expert_reference.py`)
+Compile recorded videos/images (or `expert_angles.csv`, or synthetic placeholder fallback) into `results/expert_reference.json` and `results/expert_reference.csv`:
+
+```bash
+python expert_reference.py --build
+```
+
+### 7.3 Adding Captured Mistake Data
+To run deviation analysis on real recorded mistake frames/videos instead of simulated perturbations, place files inside `mistake_data/<pose>/` named as:
+
+```text
+mistake_data/<pose>/iter_01_<mistake_name>.jpg   # or .png / .mp4
+```
+
+### 7.4 Running Deviation Analysis (`deviation_analysis.py`)
+
+```bash
+# Simulated mistakes (default, 10 iterations per active class)
+python deviation_analysis.py --mode simulate --iterations 10 --poses all --seed 42
+
+# Captured mistake images/videos (with optional skeleton+deviation annotation)
+python deviation_analysis.py --mode captured --iterations 10 --poses "Warrior II" Tree Mountain Sitting --annotate
+```
+
+### 7.5 Reading the Outputs (`results/<timestamp>/`)
+- `deviation_results.csv`: Long-format per-joint metrics (`signed_dev`, `abs_dev`, `z_score`, `pct_dev`, `severity_label`).
+- `iteration_summary.csv`: Per-iteration overall `MAE`, `RMSE`, `max_dev`, `worst_joint`, `score`, classifier prediction/confidence, `tip`, and `feedback_hit`.
+- `pose_summary.csv`: Per-class aggregates (`mean_MAE`, `std_MAE`, `mean_score`, Pearson `r`, most error-sensitive joint, first misclassified severity, feedback hit rate).
+- `sitting_robustness.csv`: Detection rates across 10 Sitting variations (ML alone, heuristic alone, combined) plus reverse standing false-positive rate.
+- Plots (300 dpi PNG): Per-asana heatmaps, MAE & posture score curves, radar charts, grouped joint mean deviation bar chart, severity-vs-MAE scatter plots, classifier confidence curves, confusion matrix, and Sitting detection bar chart.
+- `report.md`: Academic-style summary ready for thesis inclusion.
+
+### 7.6 Running Deviation Unit Tests
+
+```bash
+python test_deviation.py
+```

@@ -1,0 +1,980 @@
+{
+  "Warrior II": {
+    "source": "synthetic_placeholder",
+    "built_at": "2026-11-26 19:23:03",
+    "n_samples": 300,
+    "n_people": 0,
+    "people": [],
+    "between_person_std": {
+      "left_elbow_angle": null,
+      "right_elbow_angle": null,
+      "left_shoulder_angle": null,
+      "right_shoulder_angle": null,
+      "left_hip_angle": null,
+      "right_hip_angle": null,
+      "left_knee_angle": null,
+      "right_knee_angle": null,
+      "left_ankle_angle": null,
+      "right_ankle_angle": null,
+      "torso_inclination": null
+    },
+    "features": {
+      "left_elbow_angle": {
+        "mean": 171.9721,
+        "std": 5.5144,
+        "min": 154.0246,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_elbow_angle": {
+        "mean": 171.9721,
+        "std": 5.5144,
+        "min": 154.0246,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_shoulder_angle": {
+        "mean": 90.2961,
+        "std": 5.9155,
+        "min": 72.7489,
+        "max": 108.5041,
+        "n_samples": 300
+      },
+      "right_shoulder_angle": {
+        "mean": 90.2961,
+        "std": 5.9155,
+        "min": 72.7489,
+        "max": 108.5041,
+        "n_samples": 300
+      },
+      "left_hip_angle": {
+        "mean": 143.7044,
+        "std": 25.5648,
+        "min": 98.4093,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_hip_angle": {
+        "mean": 143.7044,
+        "std": 25.5648,
+        "min": 98.4093,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_knee_angle": {
+        "mean": 140.9153,
+        "std": 33.6544,
+        "min": 81.6076,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_knee_angle": {
+        "mean": 140.9153,
+        "std": 33.6544,
+        "min": 81.6076,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_ankle_angle": {
+        "mean": 96.4255,
+        "std": 11.1241,
+        "min": 69.8721,
+        "max": 121.2684,
+        "n_samples": 300
+      },
+      "right_ankle_angle": {
+        "mean": 96.4255,
+        "std": 11.1241,
+        "min": 69.8721,
+        "max": 121.2684,
+        "n_samples": 300
+      },
+      "torso_inclination": {
+        "mean": 5.6148,
+        "std": 4.7756,
+        "min": 0.0,
+        "max": 20.8079,
+        "n_samples": 300
+      }
+    },
+    "variants": {
+      "left_front": {
+        "n_samples": 150,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 172.52,
+            "std": 5.2278,
+            "min": 154.0246,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_elbow_angle": {
+            "mean": 171.4243,
+            "std": 5.7522,
+            "min": 155.7276,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_shoulder_angle": {
+            "mean": 89.9505,
+            "std": 6.0906,
+            "min": 76.1087,
+            "max": 108.5041,
+            "n_samples": 150
+          },
+          "right_shoulder_angle": {
+            "mean": 90.6418,
+            "std": 5.7346,
+            "min": 72.7489,
+            "max": 104.2486,
+            "n_samples": 150
+          },
+          "left_hip_angle": {
+            "mean": 119.6524,
+            "std": 10.5589,
+            "min": 98.4093,
+            "max": 144.4032,
+            "n_samples": 150
+          },
+          "right_hip_angle": {
+            "mean": 167.7564,
+            "std": 5.9369,
+            "min": 150.7282,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_knee_angle": {
+            "mean": 109.0361,
+            "std": 14.1348,
+            "min": 81.6076,
+            "max": 141.9574,
+            "n_samples": 150
+          },
+          "right_knee_angle": {
+            "mean": 172.7944,
+            "std": 5.1811,
+            "min": 156.0334,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_ankle_angle": {
+            "mean": 87.2337,
+            "std": 6.1767,
+            "min": 69.8721,
+            "max": 102.6626,
+            "n_samples": 150
+          },
+          "right_ankle_angle": {
+            "mean": 105.6173,
+            "std": 6.3293,
+            "min": 83.5854,
+            "max": 121.2684,
+            "n_samples": 150
+          },
+          "torso_inclination": {
+            "mean": 5.6148,
+            "std": 4.7836,
+            "min": 0.0,
+            "max": 20.8079,
+            "n_samples": 150
+          }
+        }
+      },
+      "right_front": {
+        "n_samples": 150,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 171.4243,
+            "std": 5.7522,
+            "min": 155.7276,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_elbow_angle": {
+            "mean": 172.52,
+            "std": 5.2278,
+            "min": 154.0246,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_shoulder_angle": {
+            "mean": 90.6418,
+            "std": 5.7346,
+            "min": 72.7489,
+            "max": 104.2486,
+            "n_samples": 150
+          },
+          "right_shoulder_angle": {
+            "mean": 89.9505,
+            "std": 6.0906,
+            "min": 76.1087,
+            "max": 108.5041,
+            "n_samples": 150
+          },
+          "left_hip_angle": {
+            "mean": 167.7564,
+            "std": 5.9369,
+            "min": 150.7282,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_hip_angle": {
+            "mean": 119.6524,
+            "std": 10.5589,
+            "min": 98.4093,
+            "max": 144.4032,
+            "n_samples": 150
+          },
+          "left_knee_angle": {
+            "mean": 172.7944,
+            "std": 5.1811,
+            "min": 156.0334,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_knee_angle": {
+            "mean": 109.0361,
+            "std": 14.1348,
+            "min": 81.6076,
+            "max": 141.9574,
+            "n_samples": 150
+          },
+          "left_ankle_angle": {
+            "mean": 105.6173,
+            "std": 6.3293,
+            "min": 83.5854,
+            "max": 121.2684,
+            "n_samples": 150
+          },
+          "right_ankle_angle": {
+            "mean": 87.2337,
+            "std": 6.1767,
+            "min": 69.8721,
+            "max": 102.6626,
+            "n_samples": 150
+          },
+          "torso_inclination": {
+            "mean": 5.6148,
+            "std": 4.7836,
+            "min": 0.0,
+            "max": 20.8079,
+            "n_samples": 150
+          }
+        }
+      }
+    }
+  },
+  "Tree": {
+    "source": "synthetic_placeholder",
+    "built_at": "2026-11-26 19:23:03",
+    "n_samples": 300,
+    "n_people": 0,
+    "people": [],
+    "between_person_std": {
+      "left_elbow_angle": null,
+      "right_elbow_angle": null,
+      "left_shoulder_angle": null,
+      "right_shoulder_angle": null,
+      "left_hip_angle": null,
+      "right_hip_angle": null,
+      "left_knee_angle": null,
+      "right_knee_angle": null,
+      "left_ankle_angle": null,
+      "right_ankle_angle": null,
+      "torso_inclination": null
+    },
+    "features": {
+      "left_elbow_angle": {
+        "mean": 169.965,
+        "std": 6.1641,
+        "min": 151.6817,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_elbow_angle": {
+        "mean": 169.965,
+        "std": 6.1641,
+        "min": 151.6817,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_shoulder_angle": {
+        "mean": 165.2502,
+        "std": 6.4638,
+        "min": 148.0097,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_shoulder_angle": {
+        "mean": 165.2502,
+        "std": 6.4638,
+        "min": 148.0097,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_hip_angle": {
+        "mean": 150.0416,
+        "std": 23.1605,
+        "min": 107.3623,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_hip_angle": {
+        "mean": 150.0416,
+        "std": 23.1605,
+        "min": 107.3623,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_knee_angle": {
+        "mean": 122.8663,
+        "std": 51.565,
+        "min": 37.6856,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_knee_angle": {
+        "mean": 122.8663,
+        "std": 51.565,
+        "min": 37.6856,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_ankle_angle": {
+        "mean": 90.2614,
+        "std": 16.5551,
+        "min": 54.3068,
+        "max": 122.5022,
+        "n_samples": 300
+      },
+      "right_ankle_angle": {
+        "mean": 90.2614,
+        "std": 16.5551,
+        "min": 54.3068,
+        "max": 122.5022,
+        "n_samples": 300
+      },
+      "torso_inclination": {
+        "mean": 4.9492,
+        "std": 5.3182,
+        "min": 0.0,
+        "max": 26.7053,
+        "n_samples": 300
+      }
+    },
+    "variants": {
+      "left_standing": {
+        "n_samples": 150,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 169.9634,
+            "std": 6.0483,
+            "min": 154.6474,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_elbow_angle": {
+            "mean": 169.9667,
+            "std": 6.298,
+            "min": 151.6817,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_shoulder_angle": {
+            "mean": 164.5537,
+            "std": 6.4432,
+            "min": 148.3175,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_shoulder_angle": {
+            "mean": 165.9467,
+            "std": 6.4304,
+            "min": 148.0097,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_hip_angle": {
+            "mean": 171.9528,
+            "std": 5.5449,
+            "min": 157.5434,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_hip_angle": {
+            "mean": 128.1305,
+            "std": 8.8899,
+            "min": 107.3623,
+            "max": 152.3135,
+            "n_samples": 150
+          },
+          "left_knee_angle": {
+            "mean": 172.8737,
+            "std": 5.5559,
+            "min": 151.6875,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_knee_angle": {
+            "mean": 72.8588,
+            "std": 16.4263,
+            "min": 37.6856,
+            "max": 106.334,
+            "n_samples": 150
+          },
+          "left_ankle_angle": {
+            "mean": 105.5321,
+            "std": 6.4615,
+            "min": 83.2398,
+            "max": 122.5022,
+            "n_samples": 150
+          },
+          "right_ankle_angle": {
+            "mean": 74.9907,
+            "std": 6.222,
+            "min": 54.3068,
+            "max": 91.7415,
+            "n_samples": 150
+          },
+          "torso_inclination": {
+            "mean": 4.9492,
+            "std": 5.3271,
+            "min": 0.0,
+            "max": 26.7053,
+            "n_samples": 150
+          }
+        }
+      },
+      "right_standing": {
+        "n_samples": 150,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 169.9667,
+            "std": 6.298,
+            "min": 151.6817,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_elbow_angle": {
+            "mean": 169.9634,
+            "std": 6.0483,
+            "min": 154.6474,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_shoulder_angle": {
+            "mean": 165.9467,
+            "std": 6.4304,
+            "min": 148.0097,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "right_shoulder_angle": {
+            "mean": 164.5537,
+            "std": 6.4432,
+            "min": 148.3175,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_hip_angle": {
+            "mean": 128.1305,
+            "std": 8.8899,
+            "min": 107.3623,
+            "max": 152.3135,
+            "n_samples": 150
+          },
+          "right_hip_angle": {
+            "mean": 171.9528,
+            "std": 5.5449,
+            "min": 157.5434,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_knee_angle": {
+            "mean": 72.8588,
+            "std": 16.4263,
+            "min": 37.6856,
+            "max": 106.334,
+            "n_samples": 150
+          },
+          "right_knee_angle": {
+            "mean": 172.8737,
+            "std": 5.5559,
+            "min": 151.6875,
+            "max": 180.0,
+            "n_samples": 150
+          },
+          "left_ankle_angle": {
+            "mean": 74.9907,
+            "std": 6.222,
+            "min": 54.3068,
+            "max": 91.7415,
+            "n_samples": 150
+          },
+          "right_ankle_angle": {
+            "mean": 105.5321,
+            "std": 6.4615,
+            "min": 83.2398,
+            "max": 122.5022,
+            "n_samples": 150
+          },
+          "torso_inclination": {
+            "mean": 4.9492,
+            "std": 5.3271,
+            "min": 0.0,
+            "max": 26.7053,
+            "n_samples": 150
+          }
+        }
+      }
+    }
+  },
+  "Mountain": {
+    "source": "synthetic_placeholder",
+    "built_at": "2026-11-26 19:23:03",
+    "n_samples": 300,
+    "n_people": 0,
+    "people": [],
+    "between_person_std": {
+      "left_elbow_angle": null,
+      "right_elbow_angle": null,
+      "left_shoulder_angle": null,
+      "right_shoulder_angle": null,
+      "left_hip_angle": null,
+      "right_hip_angle": null,
+      "left_knee_angle": null,
+      "right_knee_angle": null,
+      "left_ankle_angle": null,
+      "right_ankle_angle": null,
+      "torso_inclination": null
+    },
+    "features": {
+      "left_elbow_angle": {
+        "mean": 165.0933,
+        "std": 6.9405,
+        "min": 145.6406,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_elbow_angle": {
+        "mean": 165.2212,
+        "std": 7.6836,
+        "min": 140.0666,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_shoulder_angle": {
+        "mean": 164.7959,
+        "std": 6.9514,
+        "min": 144.1222,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_shoulder_angle": {
+        "mean": 165.4642,
+        "std": 6.9966,
+        "min": 142.6666,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_hip_angle": {
+        "mean": 171.984,
+        "std": 5.679,
+        "min": 151.4263,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_hip_angle": {
+        "mean": 170.4487,
+        "std": 5.9605,
+        "min": 156.7164,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_knee_angle": {
+        "mean": 173.6548,
+        "std": 5.4068,
+        "min": 155.605,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "right_knee_angle": {
+        "mean": 174.1453,
+        "std": 5.1866,
+        "min": 159.9963,
+        "max": 180.0,
+        "n_samples": 300
+      },
+      "left_ankle_angle": {
+        "mean": 117.8048,
+        "std": 6.4993,
+        "min": 101.7216,
+        "max": 136.8255,
+        "n_samples": 300
+      },
+      "right_ankle_angle": {
+        "mean": 118.5299,
+        "std": 6.558,
+        "min": 100.0755,
+        "max": 144.387,
+        "n_samples": 300
+      },
+      "torso_inclination": {
+        "mean": 4.2753,
+        "std": 4.6555,
+        "min": 0.0,
+        "max": 20.2614,
+        "n_samples": 300
+      }
+    },
+    "variants": {
+      "canonical": {
+        "n_samples": 300,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 165.0933,
+            "std": 6.9405,
+            "min": 145.6406,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "right_elbow_angle": {
+            "mean": 165.2212,
+            "std": 7.6836,
+            "min": 140.0666,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "left_shoulder_angle": {
+            "mean": 164.7959,
+            "std": 6.9514,
+            "min": 144.1222,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "right_shoulder_angle": {
+            "mean": 165.4642,
+            "std": 6.9966,
+            "min": 142.6666,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "left_hip_angle": {
+            "mean": 171.984,
+            "std": 5.679,
+            "min": 151.4263,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "right_hip_angle": {
+            "mean": 170.4487,
+            "std": 5.9605,
+            "min": 156.7164,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "left_knee_angle": {
+            "mean": 173.6548,
+            "std": 5.4068,
+            "min": 155.605,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "right_knee_angle": {
+            "mean": 174.1453,
+            "std": 5.1866,
+            "min": 159.9963,
+            "max": 180.0,
+            "n_samples": 300
+          },
+          "left_ankle_angle": {
+            "mean": 117.8048,
+            "std": 6.4993,
+            "min": 101.7216,
+            "max": 136.8255,
+            "n_samples": 300
+          },
+          "right_ankle_angle": {
+            "mean": 118.5299,
+            "std": 6.558,
+            "min": 100.0755,
+            "max": 144.387,
+            "n_samples": 300
+          },
+          "torso_inclination": {
+            "mean": 4.2753,
+            "std": 4.6555,
+            "min": 0.0,
+            "max": 20.2614,
+            "n_samples": 300
+          }
+        }
+      }
+    }
+  },
+  "Sitting": {
+    "source": "synthetic_placeholder",
+    "built_at": "2026-11-26 19:23:03",
+    "n_samples": 300,
+    "n_people": 0,
+    "people": [],
+    "between_person_std": {
+      "left_elbow_angle": null,
+      "right_elbow_angle": null,
+      "left_shoulder_angle": null,
+      "right_shoulder_angle": null,
+      "left_hip_angle": null,
+      "right_hip_angle": null,
+      "left_knee_angle": null,
+      "right_knee_angle": null,
+      "left_ankle_angle": null,
+      "right_ankle_angle": null,
+      "torso_inclination": null
+    },
+    "features": {
+      "left_elbow_angle": {
+        "mean": 108.2622,
+        "std": 20.8053,
+        "min": 74.4493,
+        "max": 144.7434,
+        "n_samples": 300
+      },
+      "right_elbow_angle": {
+        "mean": 108.4722,
+        "std": 20.7452,
+        "min": 73.6232,
+        "max": 154.2824,
+        "n_samples": 300
+      },
+      "left_shoulder_angle": {
+        "mean": 28.4913,
+        "std": 7.6372,
+        "min": 10.1455,
+        "max": 52.0457,
+        "n_samples": 300
+      },
+      "right_shoulder_angle": {
+        "mean": 28.4067,
+        "std": 7.5742,
+        "min": 10.807,
+        "max": 53.7951,
+        "n_samples": 300
+      },
+      "left_hip_angle": {
+        "mean": 86.5268,
+        "std": 16.4632,
+        "min": 53.8161,
+        "max": 115.1708,
+        "n_samples": 300
+      },
+      "right_hip_angle": {
+        "mean": 86.5625,
+        "std": 16.1881,
+        "min": 52.7222,
+        "max": 114.0605,
+        "n_samples": 300
+      },
+      "left_knee_angle": {
+        "mean": 75.7442,
+        "std": 22.5722,
+        "min": 34.8993,
+        "max": 107.6192,
+        "n_samples": 300
+      },
+      "right_knee_angle": {
+        "mean": 75.7187,
+        "std": 22.6959,
+        "min": 32.8387,
+        "max": 104.8252,
+        "n_samples": 300
+      },
+      "left_ankle_angle": {
+        "mean": 86.8474,
+        "std": 7.8296,
+        "min": 68.3619,
+        "max": 104.8575,
+        "n_samples": 300
+      },
+      "right_ankle_angle": {
+        "mean": 86.439,
+        "std": 7.1636,
+        "min": 67.4343,
+        "max": 106.5541,
+        "n_samples": 300
+      },
+      "torso_inclination": {
+        "mean": 6.7847,
+        "std": 5.8148,
+        "min": 0.0,
+        "max": 27.3279,
+        "n_samples": 300
+      }
+    },
+    "variants": {
+      "chair": {
+        "n_samples": 200,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 95.2215,
+            "std": 11.2427,
+            "min": 74.4493,
+            "max": 117.1079,
+            "n_samples": 200
+          },
+          "right_elbow_angle": {
+            "mean": 95.5411,
+            "std": 11.2923,
+            "min": 73.6232,
+            "max": 121.7522,
+            "n_samples": 200
+          },
+          "left_shoulder_angle": {
+            "mean": 30.1215,
+            "std": 8.0225,
+            "min": 10.2288,
+            "max": 52.0457,
+            "n_samples": 200
+          },
+          "right_shoulder_angle": {
+            "mean": 29.8395,
+            "std": 8.3159,
+            "min": 10.807,
+            "max": 53.7951,
+            "n_samples": 200
+          },
+          "left_hip_angle": {
+            "mean": 97.3546,
+            "std": 6.3776,
+            "min": 80.4258,
+            "max": 115.1708,
+            "n_samples": 200
+          },
+          "right_hip_angle": {
+            "mean": 97.2165,
+            "std": 6.4406,
+            "min": 83.9107,
+            "max": 114.0605,
+            "n_samples": 200
+          },
+          "left_knee_angle": {
+            "mean": 91.1607,
+            "std": 5.8988,
+            "min": 77.3398,
+            "max": 107.6192,
+            "n_samples": 200
+          },
+          "right_knee_angle": {
+            "mean": 91.2522,
+            "std": 5.7065,
+            "min": 77.5377,
+            "max": 104.8252,
+            "n_samples": 200
+          },
+          "left_ankle_angle": {
+            "mean": 90.3604,
+            "std": 6.34,
+            "min": 73.2738,
+            "max": 104.8575,
+            "n_samples": 200
+          },
+          "right_ankle_angle": {
+            "mean": 89.622,
+            "std": 5.8803,
+            "min": 73.1611,
+            "max": 106.5541,
+            "n_samples": 200
+          },
+          "torso_inclination": {
+            "mean": 8.1321,
+            "std": 6.0586,
+            "min": 0.0,
+            "max": 27.3279,
+            "n_samples": 200
+          }
+        }
+      },
+      "floor": {
+        "n_samples": 100,
+        "features": {
+          "left_elbow_angle": {
+            "mean": 134.3438,
+            "std": 4.7515,
+            "min": 119.4663,
+            "max": 144.7434,
+            "n_samples": 100
+          },
+          "right_elbow_angle": {
+            "mean": 134.3343,
+            "std": 5.4829,
+            "min": 121.4896,
+            "max": 154.2824,
+            "n_samples": 100
+          },
+          "left_shoulder_angle": {
+            "mean": 25.231,
+            "std": 5.5393,
+            "min": 10.1455,
+            "max": 37.0787,
+            "n_samples": 100
+          },
+          "right_shoulder_angle": {
+            "mean": 25.5411,
+            "std": 4.6708,
+            "min": 15.23,
+            "max": 34.9028,
+            "n_samples": 100
+          },
+          "left_hip_angle": {
+            "mean": 64.8712,
+            "std": 5.1263,
+            "min": 53.8161,
+            "max": 76.341,
+            "n_samples": 100
+          },
+          "right_hip_angle": {
+            "mean": 65.2544,
+            "std": 4.4883,
+            "min": 52.7222,
+            "max": 74.945,
+            "n_samples": 100
+          },
+          "left_knee_angle": {
+            "mean": 44.9112,
+            "std": 5.3337,
+            "min": 34.8993,
+            "max": 57.5528,
+            "n_samples": 100
+          },
+          "right_knee_angle": {
+            "mean": 44.6517,
+            "std": 5.2823,
+            "min": 32.8387,
+            "max": 59.3966,
+            "n_samples": 100
+          },
+          "left_ankle_angle": {
+            "mean": 79.8214,
+            "std": 5.4364,
+            "min": 68.3619,
+            "max": 96.7563,
+            "n_samples": 100
+          },
+          "right_ankle_angle": {
+            "mean": 80.0729,
+            "std": 4.907,
+            "min": 67.4343,
+            "max": 93.8275,
+            "n_samples": 100
+          },
+          "torso_inclination": {
+            "mean": 4.0898,
+            "std": 4.1632,
+            "min": 0.0,
+            "max": 16.9665,
+            "n_samples": 100
+          }
+        }
+      }
+    }
+  }
+}

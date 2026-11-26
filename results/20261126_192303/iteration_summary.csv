@@ -1,0 +1,41 @@
+class,iteration,mistake_or_variation_name,severity,variant_used,MAE,RMSE,max_dev,worst_joint,score,predicted_label,confidence,correct_class,tip,feedback_hit,sitting_heuristic_flag,sitting_heuristic_label
+Warrior II,1,elbows_bent,0.1,left_front,1.886,2.3124,4.58,right_elbow_angle,91.0011,Warrior II,1.0,True,Great posture alignment!,False,False,
+Warrior II,2,narrow_stance,0.2,left_front,1.5061,1.9414,4.0822,left_knee_angle,92.7463,Warrior II,1.0,True,Great posture alignment!,False,False,
+Warrior II,3,arms_raised_too_high,0.3,left_front,2.8906,4.4535,9.7957,right_shoulder_angle,86.543,Warrior II,1.0,True,Great posture alignment!,False,False,
+Warrior II,4,torso_leaning_sideways,0.4,left_front,3.6207,5.3908,11.6803,left_hip_angle,83.4405,Warrior II,0.9917,True,Great posture alignment!,False,False,
+Warrior II,5,back_knee_bent,0.5,left_front,4.354,9.2373,28.7374,right_knee_angle,80.4368,Warrior II,0.9833,True,Great posture alignment!,False,False,
+Warrior II,6,arms_drooping,0.6,left_front,6.459,12.6489,31.7317,right_shoulder_angle,72.401,Warrior II,0.5083,True,Keep arms parallel to ground,True,False,
+Warrior II,7,front_knee_over_bent,0.7,left_front,8.8475,17.0531,43.8389,left_knee_angle,64.2509,Warrior II,0.9417,True,Great posture alignment!,False,False,
+Warrior II,8,front_knee_under_bent,0.8,left_front,9.6426,18.419,47.2365,left_knee_angle,61.7467,Warrior II,0.8833,True,Bend front knee deeper closer to 90 degrees,True,False,
+Warrior II,9,torso_leaning_forward,0.9,left_front,12.5088,21.5378,41.3466,left_hip_angle,53.5026,Warrior II,0.975,True,Great posture alignment!,False,False,
+Warrior II,10,head_shoulders_collapsed,1.0,left_front,18.2035,26.1619,45.7125,right_shoulder_angle,40.2454,Standing,0.5667,False,Interlock fingers and stretch arms straight above head,True,False,
+Tree,1,shoulders_hunched,0.1,left_standing,1.5616,2.1656,4.8921,right_shoulder_angle,92.489,Tree,1.0,True,Great posture alignment! Palms joined overhead,False,False,
+Tree,2,standing_knee_bent,0.2,left_standing,2.9494,4.1731,11.3775,left_knee_angle,86.2889,Tree,0.9917,True,Great posture alignment! Palms joined overhead,False,False,
+Tree,3,raised_foot_on_knee_joint,0.3,left_standing,4.3114,6.2601,16.3277,right_knee_angle,80.608,Tree,1.0,True,Great posture alignment! Palms joined overhead,False,False,
+Tree,4,torso_leaning_sideways,0.4,left_standing,4.3372,6.6644,13.0274,torso_inclination,80.5043,Tree,0.9542,True,Lengthen spine straight upwards,True,False,
+Tree,5,hip_collapsed,0.5,left_standing,6.3814,9.9079,20.9986,left_hip_angle,72.6825,Tree,0.95,True,Lengthen spine straight upwards,True,False,
+Tree,6,foot_not_raised_high_enough,0.6,left_standing,6.6133,12.0102,32.09,right_knee_angle,71.8444,Tree,0.975,True,Place foot firmly on inner thigh/calf,True,False,
+Tree,7,arms_not_overhead,0.7,left_standing,10.775,22.3825,52.7373,left_shoulder_angle,58.3479,Warrior II,0.95,False,Keep arms parallel to ground,True,False,
+Tree,8,loss_of_balance,0.8,left_standing,12.9987,17.9393,35.2108,torso_inclination,52.2081,Tree,0.8292,True,Lengthen spine straight upwards,True,False,
+Tree,9,arms_dropped,0.9,left_standing,21.2177,47.2576,111.8249,left_shoulder_angle,34.615,Standing,0.5583,False,"Interlock fingers, stretch arms straight above head & lift heels on toes for Mountain Pose",True,False,
+Tree,10,elbows_bent_prayer,1.0,left_standing,39.1372,63.8902,117.6528,left_shoulder_angle,14.1301,Sitting,0.4917,False,Currently sitting. Stand up and step back to perform yoga asanas,False,False,
+Mountain,1,one_knee_bent,0.1,canonical,1.1899,1.6897,3.7537,right_knee_angle,94.224,Mountain,1.0,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,2,shoulders_raised,0.2,canonical,2.241,2.7703,5.4582,right_shoulder_angle,89.4,Mountain,1.0,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,3,hips_tilted,0.3,canonical,4.303,5.7829,12.6936,left_hip_angle,80.6421,Mountain,1.0,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,4,leaning_back,0.4,canonical,3.7292,5.6826,10.8893,torso_inclination,82.9892,Mountain,1.0,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,5,slouching,0.5,canonical,5.5436,9.039,20.6467,torso_inclination,75.7916,Mountain,0.975,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,6,bent_knees,0.6,canonical,7.2816,14.5317,36.4892,left_knee_angle,69.4835,Mountain,0.8833,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,7,arms_bent,0.7,canonical,9.8603,20.8387,48.8951,right_elbow_angle,61.0783,Mountain,0.875,True,Great posture alignment! Full upward stretch on toes,False,False,
+Mountain,8,arms_away_from_body,0.8,canonical,14.827,31.5896,75.344,left_shoulder_angle,47.6471,Warrior II,0.7167,False,Bend front knee deeper closer to 90 degrees,False,False,
+Mountain,9,arms_raised,0.9,canonical,23.1381,51.1508,120.6218,right_shoulder_angle,31.4458,Standing,0.8583,False,Interlock fingers and stretch arms straight above head,True,False,
+Mountain,10,partial_squat,1.0,canonical,27.2387,40.9411,73.1441,right_knee_angle,25.6164,Tree,0.7917,False,Place foot firmly on inner thigh/calf,False,True,Sitting
+Sitting,1,upright_chair_sitting,0.1,chair,5.2956,6.5235,12.801,left_elbow_angle,76.7375,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,2,slouched_chair_sitting,0.2,chair,5.0075,6.2997,11.6013,right_hip_angle,77.8508,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,3,leaning_forward,0.3,chair,10.6817,14.0616,24.8858,left_hip_angle,58.6207,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,4,leaning_back,0.4,chair,12.4061,14.5575,25.1881,right_hip_angle,53.7781,Sitting,0.9083,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,5,legs_crossed_on_chair,0.5,chair,10.67,13.7941,33.6331,right_knee_angle,58.6548,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,6,floor_cross_legged,0.6,floor,1.2986,1.8675,4.8746,right_hip_angle,93.7131,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,7,floor_straight_legs,0.7,chair,25.6097,39.2543,80.4804,left_knee_angle,27.7903,Sitting,0.6,True,Currently sitting. Stand up and step back to perform yoga asanas,False,False,
+Sitting,8,partial_view_knees_cut_off,0.8,chair,2.4071,3.535,9.5272,right_elbow_angle,88.6607,Sitting,1.0,True,Lower body not in frame. Step back so full body is visible.,False,True,Sitting / Step Back
+Sitting,9,partial_view_ankles_cut_off,0.9,chair,2.9009,3.3211,5.1776,right_hip_angle,86.4982,Sitting,1.0,True,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
+Sitting,10,sitting_with_arms_raised,1.0,chair,35.8584,60.059,125.8279,left_shoulder_angle,16.6474,Tree,0.7,False,Currently sitting. Stand up and step back to perform yoga asanas.,False,True,Sitting
