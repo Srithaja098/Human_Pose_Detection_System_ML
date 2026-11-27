@@ -1,7 +1,7 @@
 {
   "Warrior II": {
     "source": "synthetic_placeholder",
-    "built_at": "2026-11-26 19:23:03",
+    "built_at": "2026-11-27 15:17:18",
     "n_samples": 300,
     "n_people": 0,
     "people": [],
@@ -266,7 +266,7 @@
   },
   "Tree": {
     "source": "synthetic_placeholder",
-    "built_at": "2026-11-26 19:23:03",
+    "built_at": "2026-11-27 15:17:18",
     "n_samples": 300,
     "n_people": 0,
     "people": [],
@@ -531,7 +531,7 @@
   },
   "Mountain": {
     "source": "synthetic_placeholder",
-    "built_at": "2026-11-26 19:23:03",
+    "built_at": "2026-11-27 15:17:18",
     "n_samples": 300,
     "n_people": 0,
     "people": [],
@@ -714,7 +714,7 @@
   },
   "Sitting": {
     "source": "synthetic_placeholder",
-    "built_at": "2026-11-26 19:23:03",
+    "built_at": "2026-11-27 15:17:18",
     "n_samples": 300,
     "n_people": 0,
     "people": [],

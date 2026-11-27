@@ -6,8 +6,9 @@ Analyzes session logs (sessions.csv) for a given user and generates:
    - Panel 1: Pose score per session with daily rolling average.
    - Panel 2: Time-to-correct per session (lower is better; timeouts marked).
    - Panel 3: Trajectory of the 3 joints furthest from expert alignment.
-2. A console summary comparing the first 3 and last 3 sessions.
-3. A Tip Effectiveness audit comparing consecutive sessions.
+2. A per-session CSV with the score change from the previous session for that asana.
+3. A console summary comparing the first 3 and last 3 sessions.
+4. A Tip Effectiveness audit comparing consecutive sessions.
 
 Usage:
     python progress_report.py --user User1
@@ -86,12 +87,49 @@ def generate_asana_report(df_user_asana, user_id, asana_name, output_dir="."):
     Generates the 3-panel vertical stacked plot and prints diagnostic metrics.
     """
     df = df_user_asana.sort_values("timestamp").reset_index(drop=True)
+    df["final_score"] = pd.to_numeric(df["final_score"], errors="coerce")
+    df["previous_score"] = df["final_score"].shift(1)
+    # Scores are on a 0-100 scale, so this is a percentage-point change.
+    df["improvement_points"] = df["final_score"] - df["previous_score"]
+    df["daily_avg_score"] = df.groupby("date")["final_score"].transform("mean")
     n_sessions = len(df)
 
     print("\n" + "=" * 70)
     print(f" PROGRESS REPORT — User: '{user_id}' | Asana: '{asana_name}'")
     print(f" Total Recorded Sessions: {n_sessions}")
     print("=" * 70)
+
+    session_log = pd.DataFrame({
+        "session_number": np.arange(1, n_sessions + 1),
+        "timestamp": df["timestamp"],
+        "date": df["date"],
+        "asana": asana_name,
+        "score": df["final_score"],
+        "previous_session_score": df["previous_score"],
+        "improvement_points": df["improvement_points"],
+        "daily_average_score": df["daily_avg_score"],
+        "success": df["success"],
+        "time_to_correct_s": df["time_to_correct_s"],
+    })
+    safe_user = "_".join(str(user_id).strip().split())
+    safe_asana = "_".join(str(asana_name).strip().split()).lower()
+    session_log_path = os.path.join(
+        output_dir, f"progress_{safe_user}_{safe_asana}_sessions.csv"
+    )
+    session_log.to_csv(session_log_path, index=False)
+    print(f"\n[+] Per-session score history saved to: '{session_log_path}'")
+    print("\n--- Session Score Change (vs previous session for this asana) ---")
+    display_log = session_log[[
+        "session_number", "date", "score", "previous_session_score", "improvement_points"
+    ]].copy()
+    display_log["score"] = display_log["score"].map(lambda value: f"{value:.1f}" if pd.notna(value) else "N/A")
+    display_log["previous_session_score"] = display_log["previous_session_score"].map(
+        lambda value: f"{value:.1f}" if pd.notna(value) else "—"
+    )
+    display_log["improvement_points"] = display_log["improvement_points"].map(
+        lambda value: f"{value:+.1f} pp" if pd.notna(value) else "First session"
+    )
+    print(display_log.to_string(index=False))
 
     # 1. Terminal Trend Summary
     if n_sessions < 6:
@@ -163,8 +201,7 @@ def generate_asana_report(df_user_asana, user_id, asana_name, output_dir="."):
     ax1.axhline(80.0, color="#f1c40f", linestyle="--", alpha=0.8, label="Correctness Threshold (80%)")
 
     # Daily Average trend line
-    df["daily_avg"] = df.groupby("date")["final_score"].transform("mean")
-    ax1.plot(session_indices, df["daily_avg"].values, color="#00c6ff", linestyle="-.", linewidth=2.0, label="Daily Average")
+    ax1.plot(session_indices, df["daily_avg_score"].values, color="#00c6ff", linestyle="-.", linewidth=2.0, label="Daily Average")
 
     ax1.set_title(f"Pose Accuracy Score Progression — {asana_name}", color="#ffffff", fontsize=13, fontweight="bold", pad=10)
     ax1.set_ylabel("Score (0 - 100)", color="#ffffff", fontsize=11)
@@ -220,8 +257,7 @@ def generate_asana_report(df_user_asana, user_id, asana_name, output_dir="."):
 
     plt.tight_layout()
 
-    safe_asana = asana_name.replace(" ", "_").lower()
-    plot_path = os.path.join(output_dir, f"progress_{user_id}_{safe_asana}.png")
+    plot_path = os.path.join(output_dir, f"progress_{safe_user}_{safe_asana}.png")
     plt.savefig(plot_path, dpi=180, facecolor=fig.get_facecolor(), edgecolor="none")
     plt.close()
 

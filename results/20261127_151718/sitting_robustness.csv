@@ -1,0 +1,16 @@
+test_type,intended_class,iteration,variation_name,variant_used,MAE,score,ml_predicted_label,ml_confidence,ml_is_sitting,heuristic_flagged,heuristic_label,combined_predicted_label,combined_is_sitting
+sitting_variation,Sitting,1,upright_chair_sitting,chair,5.2956,76.7375,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,2,slouched_chair_sitting,chair,5.0075,77.8508,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,3,leaning_forward,chair,10.6817,58.6207,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,4,leaning_back,chair,12.4061,53.7781,Sitting,0.9083,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,5,legs_crossed_on_chair,chair,10.67,58.6548,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,6,floor_cross_legged,floor,1.2986,93.7131,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,7,floor_straight_legs,chair,25.6097,27.7903,Sitting,0.6,True,False,,Sitting,True
+sitting_variation,Sitting,8,partial_view_knees_cut_off,chair,2.4071,88.6607,Sitting,1.0,True,True,Sitting / Step Back,Sitting / Step Back,True
+sitting_variation,Sitting,9,partial_view_ankles_cut_off,chair,2.9009,86.4982,Sitting,1.0,True,True,Sitting,Sitting,True
+sitting_variation,Sitting,10,sitting_with_arms_raised,chair,35.8584,16.6474,Tree,0.7,False,True,Sitting,Sitting,True
+standing_reverse_fp,Warrior II,0,Warrior II_left_front,left_front,0.0,100.0,Warrior II,0.9917,False,False,,Warrior II,False
+standing_reverse_fp,Warrior II,0,Warrior II_right_front,right_front,0.0,100.0,Warrior II,1.0,False,False,,Warrior II,False
+standing_reverse_fp,Tree,0,Tree_left_standing,left_standing,0.0,100.0,Tree,1.0,False,False,,Tree,False
+standing_reverse_fp,Tree,0,Tree_right_standing,right_standing,0.0,100.0,Tree,1.0,False,False,,Tree,False
+standing_reverse_fp,Mountain,0,Mountain_canonical,canonical,0.0,100.0,Mountain,1.0,False,False,,Mountain,False

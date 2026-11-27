@@ -189,11 +189,14 @@ Outputs:
    - Panel 1: Pose accuracy score per session with daily rolling average.
    - Panel 2: Time-to-correct across sessions (lower is better; timeouts marked with red 'X').
    - Panel 3: Trajectory of the 3 joints furthest from expert alignment.
-2. **Terminal Statistical Summary**:
+2. **Per-session score history CSV** (`progress_<user>_<asana>_sessions.csv`):
+   - Each timestamped session's score, previous session score for the same asana, score change in percentage points, and that day's average.
+   - The first session has no previous score, so its improvement is blank.
+3. **Terminal Statistical Summary**:
    - First 3 sessions vs. last 3 sessions comparison (Score, Time-to-Correct, Success Rate).
    - Most improved joint vs. joint needing the most work.
    - Trend reliability guard: flags if $< 6$ sessions are available.
-3. **Tip Effectiveness Lag-1 Audit**:
+4. **Tip Effectiveness Lag-1 Audit**:
    - Evaluates whether tips displayed in session $k$ led to reduced deviation in session $k+1$.
 
 ### 4.6 Honest Evaluation on Real Images (`evaluate_on_real_images.py`)
